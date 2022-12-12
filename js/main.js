@@ -53,18 +53,55 @@ loader.load( '../media/farm-house.glb', function ( gltf ) {
 
 
 const tloader = new THREE.TextureLoader();
-const spark = tloader.load("../images/spark.png")
+const texture1 = tloader.load("../images/spark.png")
 
 const material = new THREE.PointsMaterial({
 	size: 0.2,
 	color: 0xff3433,
-	map: spark,
+	map: texture1,
 	transparent: true,
 	blending: THREE.AdditiveBlending
 })
 
-const particlesGeometry = new THREE.BufferGeometry;
-const particlesCnt = 2000;
+//const particlesGeometry = new THREE.BufferGeometry;
+var geometry = new THREE.SphereBufferGeometry( 100, 16, 8 );
+
+// add an attribute
+var numVertices = geometry.attributes.position.count;
+var alphas = new Float32Array( numVertices * 1 ); // 1 values per vertex
+
+for( var i = 0; i < numVertices; i ++ ) {
+
+	// set alpha randomly
+	alphas[ i ] = Math.random();
+
+	
+}
+
+//https://jsfiddle.net/7htvbwL6/
+//https://stackoverflow.com/questions/59448702/map-image-as-texture-to-plane-in-a-custom-shader-in-three-js
+
+geometry.setAttribute( 'alpha', new THREE.BufferAttribute( alphas, 1 ) );
+
+// uniforms
+var uniforms = {
+
+	color: { value: new THREE.Color( 0xff3433 ) },
+
+};
+
+ // point cloud material
+ var shaderMaterial = new THREE.ShaderMaterial( {
+
+	uniforms:       uniforms,
+	vertexShader:   document.getElementById( 'vertexshader' ).textContent,
+	fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+	transparent: true,
+	texture1: {value: texture1}
+});
+
+
+const particlesCnt = numVertices;
 
 const posArray = new Float32Array(particlesCnt * 3)
 
@@ -72,12 +109,12 @@ for (let i = 0; i < particlesCnt * 3; i = i + 3) {
 	// x, y, z
 	posArray[i] = (Math.random() - 0.5) * 10
 	posArray[i + 1] = (Math.random() - 0.5) * 10
-	posArray[i + 2] = (Math.random() - 0.5) * 30
+	posArray[i + 2] = (Math.random() - 0.5) * 20
 }
 
-particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
-const particlesMesh = new THREE.Points(particlesGeometry, material)
+var particlesMesh = new THREE.Points(geometry, shaderMaterial)
 
 scene.add(particlesMesh)
 
@@ -101,9 +138,7 @@ console.log(particlesMesh)
 
 function animate(now) {
 
-	particlesMesh.rotation.x += 0.00002;
-
-	TWEEN.update();
+	//TWEEN.update();
 
 	// const opacityArray = new Float32Array(particlesCnt)
 	// for (let i = 0; i < particlesCnt; i++) {
@@ -120,6 +155,26 @@ function animate(now) {
 }
 
 function render() {
+
+	particlesMesh.rotation.x += 0.0002;
+
+	var alphas = particlesMesh.geometry.attributes.alpha;
+	var count = alphas.count;
+
+    for( var i = 0; i < count; i ++ ) {
+    
+        // dynamically change alphas
+        alphas.array[ i ] *= 0.99;
+        
+        if ( alphas.array[ i ] < 0.01 ) { 
+            alphas.array[ i ] = 1.0;
+        }
+        
+    }
+
+    alphas.needsUpdate = true; // important!
+
+
 	renderer.render( scene, camera );
 	}
 

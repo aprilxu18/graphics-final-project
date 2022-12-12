@@ -18,5 +18,45 @@
 			// Our Javascript will go here.
     </script>
 </body>
+<script type="x-shader/x-vertex" id="vertexshader">
+
+    attribute float alpha;
+
+    varying float vAlpha;
+    varying vec2 vUv; 
+
+    void main() {
+
+        vUv = uv;
+
+        vAlpha = alpha;
+
+        vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+        gl_PointSize = 10.0;
+
+        gl_Position = projectionMatrix * mvPosition;
+
+    }
+
+</script>
+
+<script type="x-shader/x-fragment" id="fragmentshader">
+
+    uniform vec3 color;
+
+    uniform sampler2D texture1;
+
+    varying float vAlpha;
+    varying vec2 vUv;
+
+    void main() {
+
+        vec3 newColor = vec3(texture2D(texture1, vUv));
+        gl_FragColor = vec4(newColor, vAlpha);
+
+    }
+
+</script>
 
 </html>
