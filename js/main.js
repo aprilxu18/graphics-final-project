@@ -51,23 +51,117 @@ loader.load( '../media/farm-house.glb', function ( gltf ) {
 	scene.add( gltf.scene );
 });	 
 
+console.log(THREE.ShaderLib.points.fragmentShader)
+
+THREE.ShaderLib.points.vertexShader = `
+
+uniform float size;
+uniform float scale;
+#include <common>
+#include <color_pars_vertex>
+#include <fog_pars_vertex>
+#include <morphtarget_pars_vertex>
+#include <logdepthbuf_pars_vertex>
+#include <clipping_planes_pars_vertex>
+
+attribute float alpha;
+varying float vAlpha;
+
+void main() {
+
+	vAlpha = alpha;
+
+	#include <color_vertex>
+	#include <begin_vertex>
+	#include <morphtarget_vertex>
+	#include <project_vertex>
+	gl_PointSize = size;
+	#ifdef USE_SIZEATTENUATION
+		bool isPerspective = isPerspectiveMatrix( projectionMatrix );
+		if ( isPerspective ) gl_PointSize *= ( scale / - mvPosition.z );
+	#endif
+	#include <logdepthbuf_vertex>
+	#include <clipping_planes_vertex>
+	#include <worldpos_vertex>
+	#include <fog_vertex>
+}
+`
+
+THREE.ShaderLib.points.fragmentShader = `
+uniform vec3 diffuse;
+uniform float opacity;
+#include <common>
+#include <color_pars_fragment>
+#include <map_particle_pars_fragment>
+#include <fog_pars_fragment>
+#include <logdepthbuf_pars_fragment>
+#include <clipping_planes_pars_fragment>
+
+varying float vAlpha;
+
+void main() {
+	#include <clipping_planes_fragment>
+	vec3 outgoingLight = vec3( 0.0 );
+	vec4 diffuseColor = vec4( diffuse, opacity );
+	#include <logdepthbuf_fragment>
+	#include <map_particle_fragment>
+	#include <color_fragment>
+	#include <alphatest_fragment>
+	outgoingLight = diffuseColor.rgb;
+	gl_FragColor = vec4( outgoingLight, diffuseColor.a );
+	#include <tonemapping_fragment>
+	#include <encodings_fragment>
+	#include <fog_fragment>
+	#include <premultiplied_alpha_fragment>
+
+	gl_FragColor = vec4(gl_FragColor.rgb, gl_FragColor.a * vAlpha);
+
+}
+`
+
+
+// THREE.ShaderChunk.color_pars_vertex.glsl = `
+// #if defined( USE_COLOR_ALPHA )
+// 	varying vec4 vColor;
+// #elif defined( USE_COLOR ) || defined( USE_INSTANCING_COLOR )
+// 	varying vec3 vColor;
+// #endif
+// `
+
+// THREE.ShaderChunk.color_vertex = `
+// #if defined( USE_COLOR_ALPHA )
+// 	vColor = vec4( 1.0 );
+// #elif defined( USE_COLOR ) || defined( USE_INSTANCING_COLOR )
+// 	vColor = vec3( 1.0 );
+// #endif
+// #ifdef USE_COLOR
+// 	vColor *= color;
+// #endif
+// #ifdef USE_INSTANCING_COLOR
+// 	vColor.xyz *= instanceColor.xyz;
+// #endif
+// `
+
 
 const tloader = new THREE.TextureLoader();
-const texture1 = tloader.load("../images/spark.png")
+const map = tloader.load("../images/spark.png")
+const alphaMap = tloader.load("../images/spark_alpha.jpg")
 
 const material = new THREE.PointsMaterial({
-	size: 0.2,
+	size: 0.5,
 	color: 0xff3433,
-	map: texture1,
+	map: map,
+	alphaMap: alphaMap,
 	transparent: true,
 	blending: THREE.AdditiveBlending
 })
 
 //const particlesGeometry = new THREE.BufferGeometry;
-var geometry = new THREE.SphereBufferGeometry( 100, 16, 8 );
+var geometry = new THREE.BufferGeometry;
+//new THREE.SphereBufferGeometry( 100, 16, 8 );
 
 // add an attribute
-var numVertices = geometry.attributes.position.count;
+var numVertices = 100;
 var alphas = new Float32Array( numVertices * 1 ); // 1 values per vertex
 
 for( var i = 0; i < numVertices; i ++ ) {
@@ -97,7 +191,7 @@ var uniforms = {
 	vertexShader:   document.getElementById( 'vertexshader' ).textContent,
 	fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
 	transparent: true,
-	texture1: {value: texture1}
+	map: {value: map}
 });
 
 
@@ -114,7 +208,7 @@ for (let i = 0; i < particlesCnt * 3; i = i + 3) {
 
 geometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
 
-var particlesMesh = new THREE.Points(geometry, shaderMaterial)
+var particlesMesh = new THREE.Points(geometry, material)
 
 scene.add(particlesMesh)
 
@@ -164,7 +258,7 @@ function render() {
     for( var i = 0; i < count; i ++ ) {
     
         // dynamically change alphas
-        alphas.array[ i ] *= 0.99;
+        alphas.array[ i ] *= 0.995;
         
         if ( alphas.array[ i ] < 0.01 ) { 
             alphas.array[ i ] = 1.0;

@@ -45,15 +45,16 @@
 
     uniform vec3 color;
 
-    uniform sampler2D texture1;
+    uniform sampler2D map;
 
     varying float vAlpha;
     varying vec2 vUv;
 
     void main() {
 
-        vec3 newColor = vec3(texture2D(texture1, vUv));
-        gl_FragColor = vec4(newColor, vAlpha);
+    vec3 newColor = vec3(texture2D(map, vUv));
+    gl_FragColor = vec4(mix(newColor, color, 0.5), vAlpha);
+
 
     }
 
