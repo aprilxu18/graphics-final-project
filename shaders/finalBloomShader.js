@@ -23,8 +23,9 @@ const finalBloomShader = {
             vec4 color = texture2D(myTexture, TexCoords);
             vec4 bloomColor = texture2D(bloom, TexCoords);
             vec4 result = color + bloomColor;
-            result = vec4(1.0) - exp(-result * 0.8f);
-			result  = result * 1.2;
+			result = result - vec4(0.05, 0.05, 0.05, 0.0);
+            //result = vec4(1.0) - exp(-result * 0.8f);
+			// result  = result * 1.2;
             //result = pow(result, vec4(1.0 / 2.2));
             gl_FragColor = result;
 		}`

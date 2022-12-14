@@ -62,9 +62,9 @@ class ShaderComposer{
         const horizontalBlurPass = new ShaderPass(horizontalBlurShader, 'image');
         const verticalBlurPass = new ShaderPass(verticalBlurShader, 'image');
         const bokehPass = new BokehPass(this.scene, this.camera, {
-            focus: 2.5,
-            aperture: 0.005,
-            maxblur: 0.01,
+            focus: 15,
+            aperture: 0.0002,
+            maxblur: 0.05,
             width: window.innerWidth,
             height: window.innerHeight
           });
@@ -97,14 +97,18 @@ class ShaderComposer{
         this.brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
         this.brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
         //brightSpotsComposer.addPass(gammaCorrectionPass);
-        // brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
-        // brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
+        this.brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
+        this.brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
+        this.brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
+        this.brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
+        this.brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
+        this.brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
         
         
         
         this.finalBloomComposer.renderToScreen = true;
         this.finalBloomComposer.addPass(finalBloomPass);
-        //finalBloomComposer.addPass(bokehPass);    
+        //this.finalBloomComposer.addPass(bokehPass);    
     }
 
     renderComposers() {
