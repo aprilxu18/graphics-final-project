@@ -30,7 +30,8 @@ export class KeyboardHandler {
             let zChange = 0;
             console.log(sprite.getSprite())
 
-            let spriteObj = sprite.getSprite();
+            let spriteObjF = sprite.getSprite();
+            //let spriteObjB = sprite.getSprite2();
         
             console.log(event.which)
             var keyCode = event.which;
@@ -41,14 +42,16 @@ export class KeyboardHandler {
             } else if (keyCode == 65) { // a
                 that.left = true;
                 if (that.lastDir === "right") {
-                    new TWEEN.Tween(spriteObj.rotation)
-                        .to({y: -THREE.MathUtils.degToRad(180)/2}, 100).start()}
+                    new TWEEN.Tween(spriteObjF.rotation)
+                        .to({y: spriteObjF.rotation.y -THREE.MathUtils.degToRad(180)}, 300).start()
+                    }
                 that.lastDir = "left";
             } else if (keyCode == 68) { // d
                 that.right = true;
                 if (that.lastDir === "left") {
-                    new TWEEN.Tween(spriteObj.rotation)
-                        .to({y: THREE.MathUtils.degToRad(180)/2}, 100).start()}
+                    new TWEEN.Tween(spriteObjF.rotation)
+                        .to({y: spriteObjF.rotation.y + THREE.MathUtils.degToRad(180)}, 300).start()
+                    }
                 that.lastDir = "right";
             } else if (keyCode == 32 && !that.tiltStarted) { //space
                 that.tiltStarted = true;
@@ -57,7 +60,7 @@ export class KeyboardHandler {
                 //camera.rotation.y += 0.05;
                 new TWEEN.Tween(camera.position)
                 .to(
-{
+                    {
                         y: camera.position.y + yChange
                     },
                     500
@@ -99,6 +102,7 @@ export class KeyboardHandler {
             let zChange = 0.005;
 
             let object = spriteHandle.getSprite();
+            //let object2 = spriteHandle.getSprite2();
 
                 if (!this.loopOn) {
                     spriteHandle.loop([0,1,2,3], 1.5);
@@ -106,18 +110,22 @@ export class KeyboardHandler {
                 }
                 if (this.forward) {
                     object.position.x -= xChange;
+                    //object2.position.x -= xChange;
                     camera.position.x -= xChange;
                 }
                 if (this.backwards) {
                     object.position.x += xChange;
+                    //object2.position.x += xChange;
                     camera.position.x += xChange;
                 }
                 if (this.right) {
                     object.position.z -= zChange;
+                    //object2.position.z -= zChange;
                     camera.position.z -= zChange;
                 }
                 if (this.left) {
                     object.position.z += zChange;
+                    //object2.position.z += zChange;
                     camera.position.z += zChange;
                 }   
                 if (!this.forward && !this.backwards && !this.left && !this.right) {

@@ -21,6 +21,7 @@ export class SpriteFlipbook {
     playSpriteIndices = []; 
     spriteFront;
     spriteBack;
+    sprite;
 
     /**
      * 
@@ -47,19 +48,22 @@ export class SpriteFlipbook {
         const geo = new THREE.PlaneBufferGeometry(1, 1, 1, 1)
         console.log(geo)
     
-        this.sprite = new THREE.Mesh(geo, material)
-        console.log(this.sprite)
+        this.spriteFront = new THREE.Mesh(geo, material)
+        this.spriteFront.scale.set(0.5, 0.5, 0.5)
+        this.spriteFront.rotation.set(0, THREE.MathUtils.degToRad(90), 0)
 
-        this.sprite.scale.set(0.5, 0.5, 0.5)
-        //console.log(THREE.MathUtils.degToRad(180)/2)
-        this.sprite.rotation.set(0, THREE.MathUtils.degToRad(180)/2, 0)
+        this.spriteBack = new THREE.Mesh(geo, material)
+        this.spriteBack.scale.set(0.5, 0.5, -0.5)
+        this.spriteBack.rotation.set(0, THREE.MathUtils.degToRad(90), 0)
 
-        this.sprite2 = new THREE.Mesh(geo, material)
-        this.sprite2.scale.set(0.5, 0.5, -0.5)
-        this.sprite2.rotation.set(0, THREE.MathUtils.degToRad(180)/2, 0)
+        this.sprite = new THREE.Group();
+            this.sprite.add( this.spriteFront );
+            this.sprite.add( this.spriteBack );
         
-        scene.add(this.sprite);
-        scene.add(this.sprite2);
+            console.log(this.sprite)
+        scene.add(this.sprite)
+        //scene.add(this.sprite);
+        //scene.add(this.sprite2);
     }
 
     loop(playSpriteIndices, totalDuration) {
@@ -75,9 +79,9 @@ export class SpriteFlipbook {
         this.sprite.position.y = y;
         this.sprite.position.z = z;
 
-        this.sprite2.position.x = x;
-        this.sprite2.position.y = y;
-        this.sprite2.position.z = z - 0.01;
+        // this.sprite2.position.x = x;
+        // this.sprite2.position.y = y;
+        // this.sprite2.position.z = z - 0.01;
     }
 
     addPosition (x, y, z) {
@@ -92,6 +96,10 @@ export class SpriteFlipbook {
 
     getSprite() {
         return this.sprite;
+    }
+
+    getSprite2() {
+        return this.sprite2;
     }
 
     update(delta) {
