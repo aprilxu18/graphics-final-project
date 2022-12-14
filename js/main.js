@@ -1,10 +1,8 @@
-//import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
 import { TrackballControls } from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/TrackballControls.js';
 //import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/GLTFLoader.js';
 import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
-
-import * as THREE from 'three';
 
 import { SpriteFlipbook } from './SpriteFlipBook.js';
 import { ParticleShader } from './ParticleShader.js';
@@ -180,7 +178,7 @@ THREE.ShaderLib.points.fragmentShader = ps.getFrag();
 const knight = new SpriteFlipbook('js/sprite1.png', 8, 1, scene);
 knight.setPosition(1, 0.395, 0);
 
-const ks = new KeyboardHandler(camera, knight, scene);
+const ks = new KeyboardHandler(camera, knight, as, scene);
 var composer = new ShaderComposer(renderer, scene, camera);
 
 function animate(now) {

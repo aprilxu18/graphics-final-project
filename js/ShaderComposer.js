@@ -14,9 +14,18 @@ import { brightSpotsShader } from '../shaders/brightSpotsShader.js';
 import { horizontalBlurShader } from '../shaders/horizontalBlurShader.js';
 import { verticalBlurShader } from '../shaders/verticalBlurShader.js';
 import { finalBloomShader } from '../shaders/finalBloomShader.js';
+import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
 
 
 class ShaderComposer{
+
+    dofVals = {
+      focus: 100000,
+      aperture: 0.005,
+      maxblur: 0.01,
+      width: window.innerWidth,
+      height: window.innerHeight
+    };                    
 
     constructor(renderer, scene, camera){
         this.renderer = renderer;
@@ -24,6 +33,10 @@ class ShaderComposer{
         this.camera = camera;
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.renderer.gammaAttribute = 2.2;
+
+        new TWEEN.Tween(this.dofVals)
+        .to({focus: 2.5}, 4000).
+        start()
 
         // Textures:
         this.originalSceneTexture = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { 
@@ -61,13 +74,7 @@ class ShaderComposer{
         const brightnessPass = new ShaderPass(brightSpotsShader, 'tDiffuse');
         const horizontalBlurPass = new ShaderPass(horizontalBlurShader, 'image');
         const verticalBlurPass = new ShaderPass(verticalBlurShader, 'image');
-        const bokehPass = new BokehPass(this.scene, this.camera, {
-            focus: 15,
-            aperture: 0.0002,
-            maxblur: 0.05,
-            width: window.innerWidth,
-            height: window.innerHeight
-          });
+        const bokehPass = new BokehPass(this.scene, this.camera, this.dofVals);
         
 
         

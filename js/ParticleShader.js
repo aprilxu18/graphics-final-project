@@ -44,7 +44,7 @@ export class ParticleShader {
 
         // uniforms
         var uniforms = {
-            color: { value: new THREE.Color( 0xff3433 ) },
+            //color: { value: new THREE.Color( 0xff3433 ) }, this line does not change color
         };
 
         const particlesCnt = numVertices;
