@@ -41,16 +41,20 @@ export class KeyboardHandler {
                 that.backwards = true;
             } else if (keyCode == 65) { // a
                 that.left = true;
-                if (that.lastDir === "right") {
+                if (that.lastDir === "right" && !that.rotateStarted) {
+                    that.rotateStarted = true;
                     new TWEEN.Tween(spriteObjF.rotation)
-                        .to({y: spriteObjF.rotation.y -THREE.MathUtils.degToRad(180)}, 300).start()
+                        .to({y: spriteObjF.rotation.y - THREE.MathUtils.degToRad(180)}, 300).start()
+                        .onComplete(() => {that.rotateStarted = false;});
                     }
                 that.lastDir = "left";
             } else if (keyCode == 68) { // d
                 that.right = true;
                 if (that.lastDir === "left") {
+                    that.rotateStarted = true;
                     new TWEEN.Tween(spriteObjF.rotation)
                         .to({y: spriteObjF.rotation.y + THREE.MathUtils.degToRad(180)}, 300).start()
+                        .onComplete(() => {that.rotateStarted = false;});
                     }
                 that.lastDir = "right";
             } else if (keyCode == 32 && !that.tiltStarted) { //space
@@ -105,7 +109,7 @@ export class KeyboardHandler {
             //let object2 = spriteHandle.getSprite2();
 
                 if (!this.loopOn) {
-                    spriteHandle.loop([0,1,2,3], 1.5);
+                    spriteHandle.loop([0,1,2,3], 0.75);
                     this.loopOn = true;
                 }
                 if (this.forward) {
