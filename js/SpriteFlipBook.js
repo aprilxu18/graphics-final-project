@@ -19,6 +19,8 @@ export class SpriteFlipbook {
     runningTileArrayIndex = 0;
 
     playSpriteIndices = []; 
+    spriteFront;
+    spriteBack;
     sprite;
 
     /**
@@ -32,17 +34,33 @@ export class SpriteFlipbook {
         this.tilesHoriz = tilesHoriz;
         this.tilesVert = tilesVert;
 
-        this.map = new THREE.TextureLoader().load(spriteTexture);
+        this.map = new THREE.TextureLoader().load(spriteTexture,  (texture) => {
+            // this.sprite.geometry.width = texture.map.image.width;
+            // this.sprite.geometry.height = texture.map.image.height;
+            // this.sprite.updateMatrix();
+        });
         this.map.magFilter = THREE.NearestFilter;   // sharp pixel sprite
         this.map.repeat.set( 1/tilesHoriz, 1/tilesVert );
     
         this.update(0);
     
-        const material = new THREE.SpriteMaterial({ map: this.map });
+        const material = new THREE.MeshBasicMaterial({map: this.map, transparent: true})
+        const geo = new THREE.PlaneBufferGeometry(1, 1, 1, 1)
+        console.log(geo)
     
-        this.sprite = new THREE.Sprite(material);
+        this.spriteFront = new THREE.Mesh(geo, material)
+        this.spriteFront.scale.set(0.5, 0.5, 0.5)
+        this.spriteFront.rotation.set(0, THREE.MathUtils.degToRad(90), 0)
+
+        this.spriteBack = new THREE.Mesh(geo, material)
+        this.spriteBack.scale.set(0.5, 0.5, -0.5)
+        this.spriteBack.rotation.set(0, THREE.MathUtils.degToRad(90), 0)
+
+        this.sprite = new THREE.Group();
+            this.sprite.add( this.spriteFront );
+            this.sprite.add( this.spriteBack );
         
-        scene.add(this.sprite);
+        scene.add(this.sprite)
     }
 
     loop(playSpriteIndices, totalDuration) {
@@ -57,6 +75,10 @@ export class SpriteFlipbook {
         this.sprite.position.x = x;
         this.sprite.position.y = y;
         this.sprite.position.z = z;
+
+        // this.sprite2.position.x = x;
+        // this.sprite2.position.y = y;
+        // this.sprite2.position.z = z - 0.01;
     }
 
     addPosition (x, y, z) {
@@ -65,23 +87,33 @@ export class SpriteFlipbook {
         this.sprite.position.z += z;
     }
 
-    getPosition () {
+    getPosition() {
         return this.sprite.position;
     }
 
+    getSprite() {
+        return this.sprite;
+    }
+
+    getSprite2() {
+        return this.sprite2;
+    }
+
     update(delta) {
-        this.elapsedTime += delta;
-
-        if (this.maxDisplayTime > 0 && this.elapsedTime >= this.maxDisplayTime) {
-            this.elapsedTime = 0;
-            this.runningTileArrayIndex = (this.runningTileArrayIndex + 1) % this.playSpriteIndices.length;
-            this.currentTile = this.playSpriteIndices[this.runningTileArrayIndex];
-
-            const offsetX  = (this.currentTile % this.tilesHoriz) / this.tilesHoriz;
-            const offsetY = (this.tilesVert - Math.floor(this.currentTile / this.tilesHoriz) -1 ) / this.tilesVert;
-
-            this.map.offset.x = offsetX;
-            this.map.offset.y = offsetY;
+        if (this.sprite !== undefined) {
+            this.elapsedTime += delta;
+    
+            if (this.maxDisplayTime > 0 && this.elapsedTime >= this.maxDisplayTime) {
+                this.elapsedTime = 0;
+                this.runningTileArrayIndex = (this.runningTileArrayIndex + 1) % this.playSpriteIndices.length;
+                this.currentTile = this.playSpriteIndices[this.runningTileArrayIndex];
+    
+                const offsetX  = (this.currentTile % this.tilesHoriz) / this.tilesHoriz;
+                const offsetY = (this.tilesVert - Math.floor(this.currentTile / this.tilesHoriz) -1 ) / this.tilesVert;
+    
+                this.map.offset.x = offsetX;
+                this.map.offset.y = offsetY;
+            }   
         }
     }
 }

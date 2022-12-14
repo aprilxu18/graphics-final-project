@@ -15,12 +15,12 @@ export class ParticleShader {
         const alphaMap = tloader.load("../images/spark_alpha.jpg")
 
         const material = new THREE.PointsMaterial({
-            size: 0.5,
-            color: 0xff3433,
+            size: .2,
+            color: 0xFFFFFF,
             map: map,
-            alphaMap: alphaMap,
             transparent: true,
-            blending: THREE.AdditiveBlending
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
         })
 
         //const particlesGeometry = new THREE.BufferGeometry;
@@ -28,7 +28,7 @@ export class ParticleShader {
         //new THREE.SphereBufferGeometry( 100, 16, 8 );
 
         // add an attribute
-        var numVertices = 100;
+        var numVertices = 3000;
         var alphas = new Float32Array( numVertices * 1 ); // 1 values per vertex
 
         for( var i = 0; i < numVertices; i ++ ) {
@@ -43,7 +43,7 @@ export class ParticleShader {
 
         // uniforms
         var uniforms = {
-            color: { value: new THREE.Color( 0xff3433 ) },
+            //color: { value: new THREE.Color( 0xff3433 ) }, this line does not change color
         };
 
         const particlesCnt = numVertices;

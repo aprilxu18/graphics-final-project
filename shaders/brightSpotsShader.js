@@ -20,8 +20,8 @@ const brightSpotsShader = {
 
 			vec4 texel = texture2D( tDiffuse, vUv );
             float brightness = dot(vec3(texel.rgb), vec3(0.2126, 0.7152, 0.0722));
-            if (brightness > 3243241.2f){
-                gl_FragColor = vec4(texel.rgb, 1.0);
+            if (brightness > 1.2f){
+                gl_FragColor = vec4(texel.rgb, 1.0) - vec4(1.5, 1.5, 1.5, 0.0);
             } else {
                 gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
             }
