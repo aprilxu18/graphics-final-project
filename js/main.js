@@ -25,6 +25,7 @@ import { SpriteFlipbook } from './SpriteFlipBook.js';
 import { ParticleShader } from './ParticleShader.js';
 import { AudioHandler } from './AudioHandler.js';
 import { ShaderComposer } from './ShaderComposer.js';
+import { KeyboardHandler } from './KeyboardHandler.js';
 
 // Load 3D Scene
 var scene = new THREE.Scene(); 
@@ -69,84 +70,22 @@ loader.load( '../media/scene.glb', function ( gltf ) {
 
 
 // SOME MORE SPRITES
-const knight = new SpriteFlipbook('js/sprite.png', 8, 8, scene);
-knight.setPosition(1, 0.5, -5);
-knight.loop([0,1,2,3], 1.5);
+const knight = new SpriteFlipbook('js/sprite1.png', 8, 1, scene);
+knight.setPosition(1, 0.395, 0);
+
+const ks = new KeyboardHandler(camera, knight, scene);
 
 // Particles
 const ps = new ParticleShader(scene);
 THREE.ShaderLib.points.vertexShader = ps.getVert();
 THREE.ShaderLib.points.fragmentShader = ps.getFrag();
 
-// renderer.gammaAttribute = 2.2;
-// // Passes:
-// const renderPass = new RenderPass(scene, camera);
-// const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader, 'tDiffuse');
-// const brightnessPass = new ShaderPass(brightSpotsShader, 'tDiffuse');
-// const horizontalBlurPass = new ShaderPass(horizontalBlurShader, 'image');
-// const verticalBlurPass = new ShaderPass(verticalBlurShader, 'image');
-// const bokehPass = new BokehPass(scene, camera, {
-//     focus: 2.5,
-//     aperture: 0.005,
-//     maxblur: 0.01,
-//     width: window.innerWidth,
-//     height: window.innerHeight
-//   });
-
-// // Textures:
-// var originalSceneTexture = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter});
-// var brightSpotsSceneTexture = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter});
-// // originalSceneTexture.encoding = THREE.sRGBEncoding;
-// // brightSpotsSceneTexture.encoding = THREE.sRGBEncoding;
-
-// const finalBloomMaterial = new THREE.ShaderMaterial({
-// 	vertexShader: finalBloomShader.vertexShader,
-// 	fragmentShader: finalBloomShader.fragmentShader,
-// 	uniforms: {
-// 	  myTexture: {value: originalSceneTexture.texture},
-// 	  bloom: {value: brightSpotsSceneTexture.texture}
-// 	}
-//   });
-// const finalBloomPass = new ShaderPass(finalBloomMaterial);
-
-
-// // Composers:
-// const originalSceneComposer = new EffectComposer(renderer, originalSceneTexture);
-// originalSceneComposer.renderToScreen = false;
-// originalSceneComposer.addPass(renderPass); // RenderPass renders bufferScene containing the sphere
-// //originalSceneComposer.addPass(gammaCorrectionPass); // Renders texture onto originalSceneTexture
-
-// const brightSpotsComposer = new EffectComposer(renderer, brightSpotsSceneTexture);
-// brightSpotsComposer.renderToScreen = false;
-// brightSpotsComposer.addPass(renderPass); // Rerender the scene
-// brightSpotsComposer.addPass(brightnessPass); // Pick out the bright spots
-// brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
-// brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
-// brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
-// brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
-// //brightSpotsComposer.addPass(gammaCorrectionPass);
-// // brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
-// // brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
-
-
-// const finalBloomComposer = new EffectComposer(renderer);
-// finalBloomComposer.renderToScreen = true;
-// finalBloomComposer.addPass(finalBloomPass);
-// //finalBloomComposer.addPass(bokehPass);
-
 var composer = new ShaderComposer(renderer, scene, camera);
 
 function animate(now) {
 
-	//TWEEN.update();
-
-	// const opacityArray = new Float32Array(particlesCnt)
-	// for (let i = 0; i < particlesCnt; i++) {
-	// 	opacityArray[i] = curAlphas[i].opacity;
-	// }
-
-	// particlesGeometry.setAttribute('alpha', new THREE.BufferAttribute(opacityArray, 1));
-
+	TWEEN.update();
+	ks.moveObject(knight, camera);
 
 	render();
     controls.update();

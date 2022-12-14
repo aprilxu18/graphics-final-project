@@ -16,7 +16,7 @@ export class AudioHandler {
             console.log("loading audio")
             sound.setBuffer( buffer );
             sound.setLoop( true );
-            sound.setVolume( 0.2 );
+            sound.setVolume( 0.0 );
             sound.play();
         });
     }
