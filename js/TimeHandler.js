@@ -22,8 +22,8 @@ export class TimeHandler {
 
         this.scene.children = this.scene.children.filter((c) => !c.type.includes("Light"));
 
-        var ambientLight = new THREE.AmbientLight("0x404040", .5);
-	    scene.add(ambientLight);
+        var ambientLight = new THREE.AmbientLight("0x404040", .6);
+	    this.scene.add(ambientLight);
 
         const directionalLight = new THREE.DirectionalLight("0xffffff", 3);
         directionalLight.castShadow = true;
