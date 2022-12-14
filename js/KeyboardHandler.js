@@ -22,18 +22,26 @@ export class KeyboardHandler {
 
     rotateStarted = false;
 
-    constructor(camera, sprite, scene) {  
+    sound;
+
+    constructor(camera, sprite, sound, scene) {  
+
+        this.sound = sound;
 
         function onDocumentKeyDown(event, camera, sprite, that) {
 
+            if (that.rotateStarted) {
+                return;
+            }
+
             let xChange = 0;
             let zChange = 0;
-            console.log(sprite.getSprite())
+            //console.log(sprite.getSprite())
 
             let spriteObjF = sprite.getSprite();
             //let spriteObjB = sprite.getSprite2();
         
-            console.log(event.which)
+            //console.log(event.which)
             var keyCode = event.which;
             if (keyCode == 87) { // w
                 that.forward = true;
@@ -77,7 +85,7 @@ export class KeyboardHandler {
         };
         
         function onDocumentKeyUp(event, camera, sprite, that) {
-            console.log(event.which)
+            //console.log(event.which)
             var keyCode = event.which;
             if (keyCode == 87) { // w
                 that.forward = false;
@@ -135,6 +143,9 @@ export class KeyboardHandler {
                 if (!this.forward && !this.backwards && !this.left && !this.right) {
                     spriteHandle.loop([0], 1.5);
                     this.loopOn = false;
+                    this.sound.pauseWalkingSound();
+                } else {
+                    this.sound.playWalkingSound();  
                 }
             }
     }
