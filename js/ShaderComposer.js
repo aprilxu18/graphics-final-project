@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { ShaderMaterial, Vector2, WebGLRenderTarget } from 'three';
+import { FloatType, ShaderMaterial, sRGBEncoding, Vector2, WebGLRenderTarget } from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
@@ -22,17 +22,30 @@ class ShaderComposer{
         this.renderer = renderer;
         this.scene = scene;
         this.camera = camera;
+        this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.renderer.gammaAttribute = 2.2;
 
         // Textures:
-        this.originalSceneTexture = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter});
-        this.brightSpotsSceneTexture = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter});
-        // originalSceneTexture.encoding = THREE.sRGBEncoding;
-        // brightSpotsSceneTexture.encoding = THREE.sRGBEncoding;
+        this.originalSceneTexture = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { 
+          type: FloatType,
+          encoding: sRGBEncoding,
+          minFilter: THREE.LinearFilter, 
+          magFilter: THREE.NearestFilter}
+          );
+
+        this.brightSpotsSceneTexture = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { 
+          type: FloatType,
+          encoding: sRGBEncoding,
+          minFilter: THREE.LinearFilter, 
+          magFilter: THREE.NearestFilter}
+          );
+
 
         // Composers:
         this.originalSceneComposer = new EffectComposer(this.renderer, this.originalSceneTexture);
+        this.originalSceneComposer.encoding = sRGBEncoding;
         this.brightSpotsComposer = new EffectComposer(this.renderer, this.brightSpotsSceneTexture);
+        this.brightSpotsComposer.encoding = sRGBEncoding;
         this.finalBloomComposer = new EffectComposer(this.renderer);
         
         this.runShaders();
@@ -72,7 +85,7 @@ class ShaderComposer{
         // Composers:
         
         this.originalSceneComposer.renderToScreen = false;
-        this.originalSceneComposer.addPass(renderPass); // RenderPass renders bufferScene containing the sphere
+        this.originalSceneComposer.addPass(renderPass); // RenderPass renders bufferScene containing the scene
         //originalSceneComposer.addPass(gammaCorrectionPass); // Renders texture onto originalSceneTexture
         
 
@@ -98,8 +111,7 @@ class ShaderComposer{
       this.originalSceneComposer.swapBuffers();
       this.originalSceneComposer.render();
       
-      // brightSpotsComposer.swapBuffers();
-      // brightSpotsComposer.swapBuffers();
+      this.brightSpotsComposer.swapBuffers();
       this.brightSpotsComposer.render();
 
       this.finalBloomComposer.swapBuffers();

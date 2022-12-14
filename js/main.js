@@ -52,7 +52,7 @@ controls.update();
  // Load Light
  var ambientLight = new THREE.AmbientLight( 0xcccccc, 1 );
  scene.add( ambientLight );
- const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+ const directionalLight = new THREE.DirectionalLight( 0xcccccc, 1 );
  scene.add( directionalLight );
 
 // glTf 2.0 Loader
@@ -78,61 +78,6 @@ const ps = new ParticleShader(scene);
 THREE.ShaderLib.points.vertexShader = ps.getVert();
 THREE.ShaderLib.points.fragmentShader = ps.getFrag();
 
-// renderer.gammaAttribute = 2.2;
-// // Passes:
-// const renderPass = new RenderPass(scene, camera);
-// const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader, 'tDiffuse');
-// const brightnessPass = new ShaderPass(brightSpotsShader, 'tDiffuse');
-// const horizontalBlurPass = new ShaderPass(horizontalBlurShader, 'image');
-// const verticalBlurPass = new ShaderPass(verticalBlurShader, 'image');
-// const bokehPass = new BokehPass(scene, camera, {
-//     focus: 2.5,
-//     aperture: 0.005,
-//     maxblur: 0.01,
-//     width: window.innerWidth,
-//     height: window.innerHeight
-//   });
-
-// // Textures:
-// var originalSceneTexture = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter});
-// var brightSpotsSceneTexture = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter});
-// // originalSceneTexture.encoding = THREE.sRGBEncoding;
-// // brightSpotsSceneTexture.encoding = THREE.sRGBEncoding;
-
-// const finalBloomMaterial = new THREE.ShaderMaterial({
-// 	vertexShader: finalBloomShader.vertexShader,
-// 	fragmentShader: finalBloomShader.fragmentShader,
-// 	uniforms: {
-// 	  myTexture: {value: originalSceneTexture.texture},
-// 	  bloom: {value: brightSpotsSceneTexture.texture}
-// 	}
-//   });
-// const finalBloomPass = new ShaderPass(finalBloomMaterial);
-
-
-// // Composers:
-// const originalSceneComposer = new EffectComposer(renderer, originalSceneTexture);
-// originalSceneComposer.renderToScreen = false;
-// originalSceneComposer.addPass(renderPass); // RenderPass renders bufferScene containing the sphere
-// //originalSceneComposer.addPass(gammaCorrectionPass); // Renders texture onto originalSceneTexture
-
-// const brightSpotsComposer = new EffectComposer(renderer, brightSpotsSceneTexture);
-// brightSpotsComposer.renderToScreen = false;
-// brightSpotsComposer.addPass(renderPass); // Rerender the scene
-// brightSpotsComposer.addPass(brightnessPass); // Pick out the bright spots
-// brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
-// brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
-// brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
-// brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
-// //brightSpotsComposer.addPass(gammaCorrectionPass);
-// // brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
-// // brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
-
-
-// const finalBloomComposer = new EffectComposer(renderer);
-// finalBloomComposer.renderToScreen = true;
-// finalBloomComposer.addPass(finalBloomPass);
-// //finalBloomComposer.addPass(bokehPass);
 
 var composer = new ShaderComposer(renderer, scene, camera);
 
