@@ -43,8 +43,7 @@ let color = 0xFFB367;
 let intensity = .3;
 
 if (isDay) {
-	// console.log("HI")
-	var ambientLight = new THREE.AmbientLight("0x404040", .5);
+	var ambientLight = new THREE.AmbientLight("0x404040", .6);
 	scene.add(ambientLight);
 
 	const directionalLight = new THREE.DirectionalLight("0xffffff", 3);
@@ -53,9 +52,6 @@ if (isDay) {
 	directionalLight.shadow.bias = -0.0005;
 	scene.add(directionalLight);
 } else {
-	var ambientLight = new THREE.AmbientLight("0x404040", .1);
-	scene.add(ambientLight);
-
 	const light1 = new THREE.PointLight(color, intensity);
 	light1.position.set(1.3, .7, -.4);
 	scene.add(light1);
@@ -124,17 +120,13 @@ loader.load('../media/scene.glb', function (gltf) {
 	gltf.scene.position.y = 0;				    //Position (y = up+, down-)
 	gltf.scene.position.z = 0;
 	//console.log(gltf)
-	// camera = gltf.cameras[0];
 	gltf.scene.traverse(function (child) {
-		// console.log("HI")
-		// console.log(child)
 		if (child.isMesh) {
 			child.castShadow = true;
 			child.receiveShadow = true;
 		}
 		if (!isDay) {
 			if (child.name.includes("bottom")) {
-				// console.log(child);
 				child.traverse(function (c) {
 					if (c.name.includes('_')) {
 						let mat = new THREE.MeshStandardMaterial(color);
@@ -142,7 +134,6 @@ loader.load('../media/scene.glb', function (gltf) {
 						mat.emissive.setHex(Number(color));
 						mat.emissiveIntensity = 5;
 						c.material = mat;
-						// console.log(c.material)
 					}
 				})
 			}
@@ -152,24 +143,19 @@ loader.load('../media/scene.glb', function (gltf) {
 				let mat = new THREE.MeshStandardMaterial(color);
 				mat.color.setHex(Number(color));
 				mat.emissive.setHex(Number(color));
-				mat.emissiveIntensity = 5;
+				mat.emissiveIntensity = 4;
 				c.material = mat;
 			}
 		}
 		if (child.name === ("sky")) {
-			if (isDay) {
-				// child.material.color.setHex(0x84ECF4);
-			} else {
-				child.material.color.setHex(0x121549);
+			if (!isDay) {
+				child.material.color.setHex(0x070A3F);
 			}
 		}
-
 		if (child.name === ("ground")) {
 			console.log(child.material)
-			child.material.roughness = 10;
-			if (isDay) {
-				// child.material.color.setHex(0x35A92B);
-			} else {
+			child.material.roughness = 15;
+			if (!isDay) {
 				child.material.color.setHex(0xE1EEFC);
 			}
 		}

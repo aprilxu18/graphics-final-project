@@ -28,7 +28,7 @@ export class ParticleShader {
         //new THREE.SphereBufferGeometry( 100, 16, 8 );
 
         // add an attribute
-        var numVertices = 3000;
+        var numVertices = 3500;
         var alphas = new Float32Array( numVertices * 1 ); // 1 values per vertex
 
         for( var i = 0; i < numVertices; i ++ ) {
