@@ -40,8 +40,10 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 // Load Camera Perspective
- var camera = new THREE.PerspectiveCamera( 25, window.innerWidth / window.innerHeight, 1, 20000 );
- camera.position.set( 1, 1, 20 );
+var camera = new THREE.PerspectiveCamera( 25, window.innerWidth / window.innerHeight, 1, 20000 );
+camera.position.set(5, 1, 0);
+camera.fov *= 0.5;
+camera.updateProjectionMatrix();
 
 const as = new AudioHandler(camera) 
 	
@@ -68,74 +70,16 @@ loader.load( '../media/scene.glb', function ( gltf ) {
 	scene.add( gltf.scene );
 });	 
 
+// Particles
+const ps = new ParticleShader(scene);
+THREE.ShaderLib.points.vertexShader = ps.getVert();
+THREE.ShaderLib.points.fragmentShader = ps.getFrag();
 
 // SOME MORE SPRITES
 const knight = new SpriteFlipbook('js/sprite1.png', 8, 1, scene);
 knight.setPosition(1, 0.395, 0);
 
 const ks = new KeyboardHandler(camera, knight, scene);
-
-// Particles
-const ps = new ParticleShader(scene);
-THREE.ShaderLib.points.vertexShader = ps.getVert();
-THREE.ShaderLib.points.fragmentShader = ps.getFrag();
-
-// renderer.gammaAttribute = 2.2;
-// // Passes:
-// const renderPass = new RenderPass(scene, camera);
-// const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader, 'tDiffuse');
-// const brightnessPass = new ShaderPass(brightSpotsShader, 'tDiffuse');
-// const horizontalBlurPass = new ShaderPass(horizontalBlurShader, 'image');
-// const verticalBlurPass = new ShaderPass(verticalBlurShader, 'image');
-// const bokehPass = new BokehPass(scene, camera, {
-//     focus: 2.5,
-//     aperture: 0.005,
-//     maxblur: 0.01,
-//     width: window.innerWidth,
-//     height: window.innerHeight
-//   });
-
-// // Textures:
-// var originalSceneTexture = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter});
-// var brightSpotsSceneTexture = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter});
-// // originalSceneTexture.encoding = THREE.sRGBEncoding;
-// // brightSpotsSceneTexture.encoding = THREE.sRGBEncoding;
-
-// const finalBloomMaterial = new THREE.ShaderMaterial({
-// 	vertexShader: finalBloomShader.vertexShader,
-// 	fragmentShader: finalBloomShader.fragmentShader,
-// 	uniforms: {
-// 	  myTexture: {value: originalSceneTexture.texture},
-// 	  bloom: {value: brightSpotsSceneTexture.texture}
-// 	}
-//   });
-// const finalBloomPass = new ShaderPass(finalBloomMaterial);
-
-
-// // Composers:
-// const originalSceneComposer = new EffectComposer(renderer, originalSceneTexture);
-// originalSceneComposer.renderToScreen = false;
-// originalSceneComposer.addPass(renderPass); // RenderPass renders bufferScene containing the sphere
-// //originalSceneComposer.addPass(gammaCorrectionPass); // Renders texture onto originalSceneTexture
-
-// const brightSpotsComposer = new EffectComposer(renderer, brightSpotsSceneTexture);
-// brightSpotsComposer.renderToScreen = false;
-// brightSpotsComposer.addPass(renderPass); // Rerender the scene
-// brightSpotsComposer.addPass(brightnessPass); // Pick out the bright spots
-// brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
-// brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
-// brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
-// brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
-// //brightSpotsComposer.addPass(gammaCorrectionPass);
-// // brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
-// // brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
-
-
-// const finalBloomComposer = new EffectComposer(renderer);
-// finalBloomComposer.renderToScreen = true;
-// finalBloomComposer.addPass(finalBloomPass);
-// //finalBloomComposer.addPass(bokehPass);
-
 var composer = new ShaderComposer(renderer, scene, camera);
 
 function animate(now) {
@@ -156,6 +100,8 @@ function render() {
 
 	let deltaTime = clock.getDelta();
 	knight.update(deltaTime)
+
+	camera.lookAt(knight.getSprite().position.x, knight.getSprite().position.y + 0.3, knight.getSprite().position.z)
 
 	// originalSceneComposer.swapBuffers();
 	// originalSceneComposer.render();
