@@ -7,6 +7,7 @@ import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { LuminosityShader } from 'three/addons/shaders/LuminosityShader.js';
 import { UnrealBloomPass } from 'https://threejs.org/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { BokehPass } from 'https://threejs.org/examples/jsm/postprocessing/BokehPass.js';
+import { FXAAShader } from 'three/addons/shaders/FXAAShader.js';
 import { TexturePass } from 'three/addons/postprocessing/TexturePass.js';
 import { basicShader } from '../shaders/basicShader.js';
 import { GammaCorrectionShader } from '../shaders/gammaCorrectionShader.js';
@@ -22,6 +23,7 @@ class ShaderComposer{
         this.renderer = renderer;
         this.scene = scene;
         this.camera = camera;
+        this.renderer.antialias = false;
         this.renderer.outputEncoding = THREE.sRGBEncoding;
         this.renderer.gammaAttribute = 2.2;
 
@@ -61,9 +63,9 @@ class ShaderComposer{
         const brightnessPass = new ShaderPass(brightSpotsShader, 'tDiffuse');
         const horizontalBlurPass = new ShaderPass(horizontalBlurShader, 'image');
         const verticalBlurPass = new ShaderPass(verticalBlurShader, 'image');
-        const bokehPass = new BokehPass(this.scene, this.camera, {
-            focus: 2.5,
-            aperture: 0.005,
+        var bokehPass = new BokehPass(this.scene, this.camera, {
+            focus: 4,
+            aperture: 0.0015,
             maxblur: 0.01,
             width: window.innerWidth,
             height: window.innerHeight
@@ -81,12 +83,17 @@ class ShaderComposer{
           });
         const finalBloomPass = new ShaderPass(finalBloomMaterial);
         
+        var AAPass  =  new ShaderPass(FXAAShader);
+        const pixelRatio = this.renderer.getPixelRatio();
+
+				AAPass.material.uniforms[ 'resolution' ].value.x = 1 / ( window.innerWidth * pixelRatio );
+				AAPass.material.uniforms[ 'resolution' ].value.y = 1 / ( window.innerHeight * pixelRatio );
         
         // Composers:
         
         this.originalSceneComposer.renderToScreen = false;
         this.originalSceneComposer.addPass(renderPass); // RenderPass renders bufferScene containing the scene
-        //originalSceneComposer.addPass(gammaCorrectionPass); // Renders texture onto originalSceneTexture
+        this.originalSceneComposer.addPass(AAPass);
         
 
         this.brightSpotsComposer.renderToScreen = false;
@@ -104,7 +111,8 @@ class ShaderComposer{
         
         this.finalBloomComposer.renderToScreen = true;
         this.finalBloomComposer.addPass(finalBloomPass);
-        //finalBloomComposer.addPass(bokehPass);    
+        //this.finalBloomComposer.addPass(AAPass);
+        this.finalBloomComposer.addPass(bokehPass);    
     }
 
     renderComposers() {

@@ -50,7 +50,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.update();
 			
  // Load Light
- var ambientLight = new THREE.AmbientLight( 0xcccccc, 1 );
+ var ambientLight = new THREE.AmbientLight( 0xcccccc, 0.4 );
  scene.add( ambientLight );
  const directionalLight = new THREE.DirectionalLight( 0xcccccc, 1 );
  scene.add( directionalLight );
