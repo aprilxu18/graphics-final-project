@@ -1,15 +1,33 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+//import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
 import { TrackballControls } from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/TrackballControls.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js';
+//import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/GLTFLoader.js';
 import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.module.min.js';
+
+import * as THREE from 'three';
+import { ShaderMaterial, Vector2, WebGLRenderTarget } from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+//import { GammaCorrectionShader } from 'https://threejs.org/examples/js/shaders/GammaCorrectionShader.js';
+import { LuminosityShader } from 'three/addons/shaders/LuminosityShader.js';
+import { UnrealBloomPass } from 'https://threejs.org/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { BokehPass } from 'https://threejs.org/examples/jsm/postprocessing/BokehPass.js';
+import { TexturePass } from 'three/addons/postprocessing/TexturePass.js';
+import { basicShader } from '../shaders/basicShader.js';
+import { GammaCorrectionShader } from '../shaders/copyShader.js';
+import { brightSpotsShader } from '../shaders/brightSpotsShader.js';
+import { horizontalBlurShader } from '../shaders/horizontalBlurShader.js';
+import { verticalBlurShader } from '../shaders/verticalBlurShader.js';
+import { finalBloomShader } from '../shaders/finalBloomShader.js';
 
 // Load 3D Scene
 var scene = new THREE.Scene(); 
 var clock = new THREE.Clock();
 	
  // Load a Renderer
-var renderer = new THREE.WebGLRenderer({ alpha: false });
+var renderer = new THREE.WebGLRenderer({ alpha: false, antialias: true});
 //renderer.setClearColor( 0xC5C5C3 );
 renderer.setClearColor( 0x000000 );
 renderer.setPixelRatio( window.devicePixelRatio );
@@ -25,23 +43,38 @@ console.log(camera);
 const controls = new OrbitControls(camera, renderer.domElement); 
 controls.update();
 			
- // Load Light
-var ambientLight = new THREE.AmbientLight( 0xcccccc, 1 );
-scene.add( ambientLight );
+//  // Load Light
+ var ambientLight = new THREE.AmbientLight( 0xcccccc, 1 );
+ scene.add( ambientLight );
+// const color = 0xffd700;
+// const intensity = 1.5;
+// const pointLight = new THREE.PointLight(color, intensity);
+// pointLight.position.set(3,2,0);
+// scene.add(pointLight);
 
 			
 // const light = new THREE.PointLight( 0xcccccc);
 // light.position.set( 0, 10, 10 );
 // scene.add( light );
 
-const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+//const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
 // directionalLight.position.set(100, 100, 100);
 // directionalLight.target.position.set(0, 0, 0);
-scene.add( directionalLight );
+//scene.add( directionalLight );
+
+const directionalLight = new THREE.DirectionalLight("0xffffff", 3);
+directionalLight.castShadow = true;
+directionalLight.position.set(50, 50, 0);
+// directionalLight.target.position.set(0, 0, 0);
+directionalLight.shadow.bias = -0.0005;
+scene.add(directionalLight);
+	renderer.outputEncoding = THREE.sRGBEncoding
+renderer.physicallyCorrectLights = true;
+
 
 // glTf 2.0 Loader
 var loader = new GLTFLoader();				
-loader.load( '../media/farm-house.glb', function ( gltf ) {			
+loader.load( '../media/scene.glb', function ( gltf ) {			
 	gltf.scene.scale.set( 1 / 5, 1 / 5, 1 / 5 );			   
 	gltf.scene.position.x = 0;				    //Position (x = right+ left-) 
         gltf.scene.position.y = 0;				    //Position (y = up+, down-)
@@ -230,6 +263,64 @@ console.log(particlesMesh)
 // 		.start();
 // }
 
+renderer.gammaAttribute = 2.2;
+// Passes:
+const renderPass = new RenderPass(scene, camera);
+const gammaCorrectionPass = new ShaderPass(GammaCorrectionShader, 'tDiffuse');
+const brightnessPass = new ShaderPass(brightSpotsShader, 'tDiffuse');
+const horizontalBlurPass = new ShaderPass(horizontalBlurShader, 'image');
+const verticalBlurPass = new ShaderPass(verticalBlurShader, 'image');
+const bokehPass = new BokehPass(scene, camera, {
+    focus: 2.5,
+    aperture: 0.005,
+    maxblur: 0.01,
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
+
+// Textures:
+var originalSceneTexture = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter});
+var brightSpotsSceneTexture = new WebGLRenderTarget( window.innerWidth, window.innerHeight, { minFilter: THREE.LinearFilter, magFilter: THREE.NearestFilter});
+// originalSceneTexture.encoding = THREE.sRGBEncoding;
+// brightSpotsSceneTexture.encoding = THREE.sRGBEncoding;
+
+const finalBloomMaterial = new THREE.ShaderMaterial({
+	vertexShader: finalBloomShader.vertexShader,
+	fragmentShader: finalBloomShader.fragmentShader,
+	uniforms: {
+	  myTexture: {value: originalSceneTexture.texture},
+	  bloom: {value: brightSpotsSceneTexture.texture}
+	}
+  });
+const finalBloomPass = new ShaderPass(finalBloomMaterial);
+
+
+// Composers:
+const originalSceneComposer = new EffectComposer(renderer, originalSceneTexture);
+originalSceneComposer.renderToScreen = false;
+originalSceneComposer.addPass(renderPass); // RenderPass renders bufferScene containing the sphere
+//originalSceneComposer.addPass(gammaCorrectionPass); // Renders texture onto originalSceneTexture
+
+const brightSpotsComposer = new EffectComposer(renderer, brightSpotsSceneTexture);
+brightSpotsComposer.renderToScreen = false;
+brightSpotsComposer.addPass(renderPass); // Rerender the scene
+brightSpotsComposer.addPass(brightnessPass); // Pick out the bright spots
+brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
+brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
+brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
+brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
+//brightSpotsComposer.addPass(gammaCorrectionPass);
+// brightSpotsComposer.addPass(horizontalBlurPass); // Horizontal Blur
+// brightSpotsComposer.addPass(verticalBlurPass); // Vertical Blur
+
+
+const finalBloomComposer = new EffectComposer(renderer);
+finalBloomComposer.renderToScreen = true;
+finalBloomComposer.addPass(finalBloomPass);
+//finalBloomComposer.addPass(bokehPass);
+
+
+
 function animate(now) {
 
 	//TWEEN.update();
@@ -268,8 +359,16 @@ function render() {
 
     alphas.needsUpdate = true; // important!
 
+	originalSceneComposer.swapBuffers();
+	originalSceneComposer.render();
+	
+	// brightSpotsComposer.swapBuffers();
+	// brightSpotsComposer.swapBuffers();
+	brightSpotsComposer.render();
 
-	renderer.render( scene, camera );
+	finalBloomComposer.swapBuffers();
+	finalBloomComposer.render();
+
 	}
 
 // renderer.physicallyCorrectLights = true
