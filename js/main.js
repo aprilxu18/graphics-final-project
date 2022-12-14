@@ -9,12 +9,14 @@ import { ParticleShader } from './ParticleShader.js';
 import { AudioHandler } from './AudioHandler.js';
 import { ShaderComposer } from './ShaderComposer.js';
 import { KeyboardHandler } from './KeyboardHandler.js';
+import { TimeHandler} from './TimeHandler.js';
 
-let isDay = false;
 
 // Load 3D Scene
 var scene = new THREE.Scene();
 var clock = new THREE.Clock();
+
+let isDay = false;
 
 // Load a Renderer
 var renderer = new THREE.WebGLRenderer({ alpha: false, antialias: true });
@@ -42,7 +44,6 @@ let color = 0xFFB367;
 let intensity = .3;
 
 if (isDay) {
-	console.log("HI")
 	var ambientLight = new THREE.AmbientLight("0x404040", .5);
 	scene.add(ambientLight);
 
@@ -100,11 +101,26 @@ if (isDay) {
 // glTf 2.0 Loader
 var loader = new GLTFLoader();
 loader.load('../media/scene.glb', function (gltf) {
+	// Light Handler
+	const tc = new TimeHandler(gltf, scene);
+	document.addEventListener("keypress", (e) => {
+		var keyCode = event.which;
+			if (keyCode == 103) { // g
+				isDay = !isDay;
+				console.log("Changing Scene")
+				if (isDay) {
+					tc.changeToDay();
+				} else {
+					tc.changeToNight();
+				}
+			}
+	}, false);
+
 	gltf.scene.scale.set(1 / 5, 1 / 5, 1 / 5);
 	gltf.scene.position.x = 0;				    //Position (x = right+ left-) 
 	gltf.scene.position.y = 0;				    //Position (y = up+, down-)
 	gltf.scene.position.z = 0;
-	console.log(gltf)
+	//console.log(gltf)
 	// camera = gltf.cameras[0];
 	gltf.scene.traverse(function (child) {
 		// console.log("HI")
@@ -140,8 +156,13 @@ loader.load('../media/scene.glb', function (gltf) {
 		if (child.name === ("sky")) {
 			if (isDay) {
 				child.material.color.setHex(0x84ECF4);
+				// console.log(child.material.color)
+				// new TWEEN.Tween(child.material)
+                // .to({color: 0x84ECF4}, 4000).start()
 			} else {
 				child.material.color.setHex(0xFF8B58);
+				// new TWEEN.Tween(child.material)
+                // .to({color: 0xFF8B58}, 4000).start()
 			}
 			// child.material.flatShading = true;
 			// let mat = new THREE.MeshPhongMaterial();
@@ -180,6 +201,8 @@ knight.setPosition(1, 0.395, 0);
 
 const ks = new KeyboardHandler(camera, knight, as, scene);
 var composer = new ShaderComposer(renderer, scene, camera);
+
+console.log(scene)
 
 function animate(now) {
 
