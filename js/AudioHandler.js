@@ -33,6 +33,7 @@ export class AudioHandler {
             that.walkSound.setBuffer( buffer );
             that.walkSound.setLoop( true );
             that.walkSound.setVolume( 0.1 );
+            that.walkSound.playbackRate = .8
         });
     }
 

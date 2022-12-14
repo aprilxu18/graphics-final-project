@@ -10,7 +10,7 @@ import { AudioHandler } from './AudioHandler.js';
 import { ShaderComposer } from './ShaderComposer.js';
 import { KeyboardHandler } from './KeyboardHandler.js';
 
-let isDay = false;
+let isDay = true;
 
 // Load 3D Scene
 var scene = new THREE.Scene();
@@ -42,7 +42,7 @@ let color = 0xFFB367;
 let intensity = .3;
 
 if (isDay) {
-	console.log("HI")
+	// console.log("HI")
 	var ambientLight = new THREE.AmbientLight("0x404040", .5);
 	scene.add(ambientLight);
 
@@ -52,6 +52,9 @@ if (isDay) {
 	directionalLight.shadow.bias = -0.0005;
 	scene.add(directionalLight);
 } else {
+	var ambientLight = new THREE.AmbientLight("0x404040", .1);
+	scene.add(ambientLight);
+
 	const light1 = new THREE.PointLight(color, intensity);
 	light1.position.set(1.3, .7, -.4);
 	scene.add(light1);
@@ -139,30 +142,20 @@ loader.load('../media/scene.glb', function (gltf) {
 		}
 		if (child.name === ("sky")) {
 			if (isDay) {
-				child.material.color.setHex(0x84ECF4);
+				// child.material.color.setHex(0x84ECF4);
 			} else {
-				child.material.color.setHex(0xFF8B58);
+				child.material.color.setHex(0x121549);
 			}
-			// child.material.flatShading = true;
-			// let mat = new THREE.MeshPhongMaterial();
-			// mat.shininess = 20;
-			// // mat.color.setHex();
-			// child.material = mat;
 		}
 
 		if (child.name === ("ground")) {
 			console.log(child.material)
-			child.material.roughness = 20;
+			child.material.roughness = 10;
 			if (isDay) {
-				child.material.color.setHex(0x35A92B);
+				// child.material.color.setHex(0x35A92B);
 			} else {
-				child.material.color.setHex(0x278AA0);
+				child.material.color.setHex(0xE1EEFC);
 			}
-			// child.material.flatShading = true;
-			// let mat = new THREE.MeshPhongMaterial();
-			// mat.shininess = 20;
-			// // mat.color.setHex();
-			// child.material = mat;
 		}
 	}
 	)				    //Position (z = front +, back-)
