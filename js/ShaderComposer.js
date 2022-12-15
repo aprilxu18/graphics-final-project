@@ -1,14 +1,28 @@
-import * as THREE from 'three';
-import { FloatType, ShaderMaterial, sRGBEncoding, Vector2, WebGLRenderTarget } from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
-import { LuminosityShader } from 'three/addons/shaders/LuminosityShader.js';
-import { UnrealBloomPass } from 'https://threejs.org/examples/jsm/postprocessing/UnrealBloomPass.js';
-import { BokehPass } from 'https://threejs.org/examples/jsm/postprocessing/BokehPass.js';
-import { TexturePass } from 'three/addons/postprocessing/TexturePass.js';
-import { basicShader } from '../shaders/basicShader.js';
+import * as THREE from 'https://unpkg.com/three@0.126.1/build/three.module.js';
+//import * as THREE from 'three';
+//import * as three from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+//import * as THREE from "../node_modules/three/build/three.module.js"
+//import { FloatType, ShaderMaterial, sRGBEncoding, Vector2, WebGLRenderTarget } from 'three';
+// import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+import { FloatType, ShaderMaterial, sRGBEncoding, Vector2, WebGLRenderTarget } from 'https://unpkg.com/three@0.126.1/build/three.module.js'
+//'https://unpkg.com/three@0.126.1/build/three.module.js';
+import { EffectComposer } from 'https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/RenderPass.js';
+import { ShaderPass } from 'https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/ShaderPass.js';
+
+// import { LuminosityShader } from 'three/addons/shaders/LuminosityShader.js';
+// import { UnrealBloomPass } from 'https://threejs.org/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { BokehPass } from "https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/BokehPass.js"
+//"/js/BokehPass.js";
+//'https://threejs.org/examples/jsm/postprocessing/BokehPass.js'
+//'https://threejs.org/examples/jsm/postprocessing/BokehPass.js';
+//"./BokehPass.js"
+//'https://threejs.org/examples/jsm/postprocessing/BokehPass.js';
+// "./BrokehPass.js"
+//from 'https://threejs.org/examples/jsm/postprocessing/BokehPass.js';
+// import { TexturePass } from 'three/addons/postprocessing/TexturePass.js';
+// import { basicShader } from '../shaders/basicShader.js';
 import { GammaCorrectionShader } from '../shaders/gammaCorrectionShader.js';
 import { brightSpotsShader } from '../shaders/brightSpotsShader.js';
 import { horizontalBlurShader } from '../shaders/horizontalBlurShader.js';
