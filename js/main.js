@@ -170,8 +170,8 @@ THREE.ShaderLib.points.vertexShader = ps.getVert();
 THREE.ShaderLib.points.fragmentShader = ps.getFrag();
 
 // SOME MORE SPRITES
-const knight = new SpriteFlipbook('js/sprite1.png', 8, 1, scene);
-knight.setPosition(1, 0.395, 0);
+const knight = new SpriteFlipbook('js/spriteSmall.png', 8, 1, scene);
+knight.setPosition(1, 0.28, 0);
 
 const ks = new KeyboardHandler(camera, knight, as, scene);
 var composer = new ShaderComposer(renderer, scene, camera);
