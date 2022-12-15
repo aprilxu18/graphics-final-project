@@ -16,7 +16,7 @@ import { ShaderPass } from 'https://unpkg.com/three@0.126.1/examples/jsm/postpro
 import { BokehPass } from "https://unpkg.com/three@0.126.1/examples/jsm/postprocessing/BokehPass.js"
 //"/js/BokehPass.js";
 //'https://threejs.org/examples/jsm/postprocessing/BokehPass.js'
-//'https://threejs.org/examples/jsm/postprocessing/BokehPass.js';
+//'https://threejs.org/examples/jsm/postprocessing/BokehPass.js';F
 //"./BokehPass.js"
 //'https://threejs.org/examples/jsm/postprocessing/BokehPass.js';
 // "./BrokehPass.js"
@@ -103,17 +103,17 @@ class ShaderComposer{
           });
         const finalBloomPass = new ShaderPass(finalBloomMaterial);
         
-        var AAPass  =  new ShaderPass(FXAAShader);
-        const pixelRatio = this.renderer.getPixelRatio();
+        //var AAPass  =  new ShaderPass(FXAAShader);
+        // const pixelRatio = this.renderer.getPixelRatio();
 
-				AAPass.material.uniforms[ 'resolution' ].value.x = 1 / ( window.innerWidth * pixelRatio );
-				AAPass.material.uniforms[ 'resolution' ].value.y = 1 / ( window.innerHeight * pixelRatio );
+				// AAPass.material.uniforms[ 'resolution' ].value.x = 1 / ( window.innerWidth * pixelRatio );
+				// AAPass.material.uniforms[ 'resolution' ].value.y = 1 / ( window.innerHeight * pixelRatio );
         
         // Composers:
         
         this.originalSceneComposer.renderToScreen = false;
         this.originalSceneComposer.addPass(renderPass); // RenderPass renders bufferScene containing the scene
-        this.originalSceneComposer.addPass(AAPass);
+        //this.originalSceneComposer.addPass(AAPass);
         
 
         this.brightSpotsComposer.renderToScreen = false;
