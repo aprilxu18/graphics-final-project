@@ -9,7 +9,7 @@ import { ParticleShader } from './ParticleShader.js';
 import { AudioHandler } from './AudioHandler.js';
 import { ShaderComposer } from './ShaderComposer.js';
 import { KeyboardHandler } from './KeyboardHandler.js';
-import { TimeHandler} from './TimeHandler.js';
+//import { TimeHandler} from './TimeHandler.js';
 
 // Load 3D Scene
 var scene = new THREE.Scene();
