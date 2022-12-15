@@ -1,6 +1,9 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
 import { Scene } from 'https://cdn.jsdelivr.net/npm/three@0.124/build/three.module.js';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.124/examples/jsm/loaders/GLTFLoader.js';
 
+// let origLanternColor;
+// let origTallLanternColor;
 /**
  * This class provides to functionality to animate sprite sheets.
  */
@@ -11,19 +14,20 @@ export class TimeHandler {
     color = 0xFFB367;
     intensity = .3;
 
-    constructor(gltf, scene) {  
+    constructor(gltf, scene) {
 
         this.gltf = gltf;
         this.scene = scene;
-        
+
     }
 
     changeToDay() {
 
-        this.scene.children = this.scene.children.filter((c) => !c.type.includes("Light"));
+        this.scene.children = []
+        //this.scene.children.filter((c) => !c.type.includes("Light"));
 
         var ambientLight = new THREE.AmbientLight("0x404040", .6);
-	    this.scene.add(ambientLight);
+        this.scene.add(ambientLight);
 
         const directionalLight = new THREE.DirectionalLight("0xffffff", 3);
         directionalLight.castShadow = true;
@@ -31,12 +35,19 @@ export class TimeHandler {
         directionalLight.shadow.bias = -0.0005;
         this.scene.add(directionalLight);
 
-        this.traverse(true)
+        //this.traverse(true)
+        this.loadScene(true);
     }
 
     changeToNight() {
 
-        this.scene.children = this.scene.children.filter((c) => !c.type.includes("Light"));
+
+        var color = 0xFFB367;
+        var intensity = .3;
+
+
+        this.scene.children = [];
+        //this.scene.children.filter((c) => !c.type.includes("Light"));
 
         const light1 = new THREE.PointLight(color, intensity);
         light1.position.set(1.3, .7, -.4);
@@ -82,76 +93,76 @@ export class TimeHandler {
         light11.position.set(.13, .3, -1.35);
         this.scene.add(light11);
 
-        this.traverse(false)
+        //this.traverse(false)
+        this.loadScene(false);
 
     }
 
-    traverse(isDay) {
-        this.gltf.scene.traverse(function (child) {
-            // console.log("HI")
-            // console.log(child)
-            if (child.isMesh) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-            }
-            if (!isDay) {
-                if (child.name.includes("bottom")) {
-                    // console.log(child);
-                    child.traverse(function (c) {
-                        if (c.name.includes('_')) {
-                            let mat = new THREE.MeshStandardMaterial(color);
-                            mat.color.setHex(Number(color));
-                            mat.emissive.setHex(Number(color));
-                            mat.emissiveIntensity = 5;
-                            c.material = mat;
-                            // console.log(c.material)
-                        }
-                    })
+    loadScene(isDay) {
+        var color = 0xFFB367;
+        var intensity = .3;
+
+        var that = this;
+
+        // glTf 2.0 Loader
+        var loader = new GLTFLoader();
+        loader.load('../media/scene.glb', function (ngltf) {
+            ngltf.scene.scale.set(1 / 5, 1 / 5, 1 / 5);
+            ngltf.scene.position.x = 0;				    //Position (x = right+ left-) 
+            ngltf.scene.position.y = 0;				    //Position (y = up+, down-)
+            ngltf.scene.position.z = 0;
+            //console.log(gltf)
+            ngltf.scene.traverse(function (child) {
+                if (child.isMesh) {
+                    child.castShadow = true;
+                    child.receiveShadow = true;
                 }
-                if (child.name === "japanese_lamp_full_scneobjcleanermaterialmergergles" ||
-                    child.name === "japanese_lamp_full_scneobjcleanermaterialmergergles003") {
-                    let c = child.children[0].children[1];
-                    let mat = new THREE.MeshStandardMaterial(color);
-                    mat.color.setHex(Number(color));
-                    mat.emissive.setHex(Number(color));
-                    mat.emissiveIntensity = 5;
-                    c.material = mat;
+                if (!isDay) {
+                    if (child.name.includes("bottom")) {
+                        child.traverse(function (c) {
+                            if (c.name.includes('_')) {
+                                let mat = new THREE.MeshStandardMaterial(color);
+                                mat.color.setHex(Number(color));
+                                mat.emissive.setHex(Number(color));
+                                mat.emissiveIntensity = 5;
+                                c.material = mat;
+                            }
+                        })
+                    }
+                    if (child.name === "japanese_lamp_full_scneobjcleanermaterialmergergles" ||
+                        child.name === "japanese_lamp_full_scneobjcleanermaterialmergergles003") {
+                            console.log("GOT TO LAMP")
+                        let c = child.children[0].children[1];
+                        let mat = new THREE.MeshStandardMaterial(color);
+                        mat.color.setHex(Number(color));
+                        mat.emissive.setHex(Number(color));
+                        mat.emissiveIntensity = 4;
+                        c.material = mat;
+                    }
+                }
+                if (child.name === ("sky")) {
+                    if (!isDay) {
+                        child.material.color.setHex(0x070A3F);
+                    }
+                }
+                if (child.name === ("ground")) {
+                    console.log("GROUND")
+                    child.material.roughness = 15;
+                    if (!isDay) {
+                        child.material.color.setHex(0xE1EEFC);
+                    }
                 }
             }
-            if (child.name === ("sky")) {
-                if (isDay) {
-                    child.material.color.setHex(0x84ECF4);
-                    // console.log(child.material.color)
-                    // new TWEEN.Tween(child.material)
-                    // .to({color: 0x84ECF4}, 4000).start()
-                } else {
-                    child.material.color.setHex(0xFF8B58);
-                    // new TWEEN.Tween(child.material)
-                    // .to({color: 0xFF8B58}, 4000).start()
-                }
-                // child.material.flatShading = true;
-                // let mat = new THREE.MeshPhongMaterial();
-                // mat.shininess = 20;
-                // // mat.color.setHex();
-                // child.material = mat;
-            }
-    
-            if (child.name === ("ground")) {
-                console.log(child.material)
-                child.material.roughness = 20;
-                if (isDay) {
-                    child.material.color.setHex(0x35A92B);
-                } else {
-                    child.material.color.setHex(0x278AA0);
-                }
-                // child.material.flatShading = true;
-                // let mat = new THREE.MeshPhongMaterial();
-                // mat.shininess = 20;
-                // // mat.color.setHex();
-                // child.material = mat;
-            }
-        }
-        )				    //Position (z = front +, back-)
+            )				    //Position (z = front +, back-)
+
+            console.log(that.gltf)
+            console.log(ngltf)
+            console.log("HI")
+            that.gltf = [];
+            console.log(ngltf)
+            that.gltf = ngltf;
+            //console.log(this.scene)
+        });
     }
-    
+
 }

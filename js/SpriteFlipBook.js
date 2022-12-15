@@ -60,7 +60,7 @@ export class SpriteFlipbook {
             this.sprite.add( this.spriteFront );
             this.sprite.add( this.spriteBack );
         
-        scene.add(this.sprite)
+        //scene.add(this.sprite)
     }
 
     loop(playSpriteIndices, totalDuration) {
