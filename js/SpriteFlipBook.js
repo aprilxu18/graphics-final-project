@@ -45,7 +45,7 @@ export class SpriteFlipbook {
         this.update(0);
     
         const material = new THREE.MeshBasicMaterial({map: this.map, transparent: true})
-        const geo = new THREE.PlaneBufferGeometry(1, 1, 1, 1)
+        const geo = new THREE.PlaneBufferGeometry(.4, .6, 1, 1)
         console.log(geo)
     
         this.spriteFront = new THREE.Mesh(geo, material)
@@ -60,7 +60,7 @@ export class SpriteFlipbook {
             this.sprite.add( this.spriteFront );
             this.sprite.add( this.spriteBack );
         
-        scene.add(this.sprite)
+        //scene.add(this.sprite)
     }
 
     loop(playSpriteIndices, totalDuration) {

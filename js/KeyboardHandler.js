@@ -68,7 +68,7 @@ export class KeyboardHandler {
             } else if (keyCode == 32 && !that.tiltStarted) { //space
                 that.tiltStarted = true;
         
-                let yChange = 0.5 * that.tiltUp;
+                let yChange = 2 * that.tiltUp;
                 //camera.rotation.y += 0.05;
                 new TWEEN.Tween(camera.position)
                 .to(
@@ -110,7 +110,7 @@ export class KeyboardHandler {
         TWEEN.update();
 
         if (spriteHandle !== undefined) {
-            let xChange = 0.005;
+            let xChange = 0.01;
             let zChange = 0.005;
 
             let object = spriteHandle.getSprite();
