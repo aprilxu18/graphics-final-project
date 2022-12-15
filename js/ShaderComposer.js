@@ -20,8 +20,8 @@ import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.m
 class ShaderComposer{
 
     dofVals = {
-      focus: 100000,
-      aperture: 0.005,
+      focus: 6.35,
+      aperture: 0.0018,
       maxblur: 0.01,
       width: window.innerWidth,
       height: window.innerHeight
@@ -35,7 +35,7 @@ class ShaderComposer{
         this.renderer.gammaAttribute = 2.2;
 
         new TWEEN.Tween(this.dofVals)
-        .to({focus: 2.5}, 4000).
+        .to({focus: 6.35, aperture: 0.002}, 4000).
         start()
 
         // Textures:
@@ -115,7 +115,7 @@ class ShaderComposer{
         
         this.finalBloomComposer.renderToScreen = true;
         this.finalBloomComposer.addPass(finalBloomPass);
-        //this.finalBloomComposer.addPass(bokehPass);    
+        this.finalBloomComposer.addPass(bokehPass);    
     }
 
     renderComposers() {
