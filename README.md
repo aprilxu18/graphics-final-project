@@ -22,3 +22,17 @@ Depth of Field
 Particles
 Audio
 
+# How To Run
+You can run the project by cloning it and using a live server like express to open the index.html
+We recommend using vscode's live server extension as that is what we used, along with Google Chrome,
+as Safari does not work the best with the live server.
+
+The website can also be found on https://kazar4.com/graphics/index.html
+
+# libraries
+three.js & three.js addons
+https://www.google.com/search?client=safari&rls=en&q=three+js&ie=UTF-8&oe=UTF-8
+Helper Code For Sprites
+https://github.com/tamani-coding/threejs-sprite-flipbook
+Blender & blenderkit models
+https://www.blender.org
