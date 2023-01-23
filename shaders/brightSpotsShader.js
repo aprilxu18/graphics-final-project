@@ -5,6 +5,7 @@ const brightSpotsShader = {
 		'tDiffuse': { value: null },
 
 	},
+	
 
 	vertexShader: /* glsl */`
 		varying vec2 vUv;

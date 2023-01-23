@@ -28,7 +28,7 @@ export class ParticleShader {
         //new THREE.SphereBufferGeometry( 100, 16, 8 );
 
         // add an attribute
-        var numVertices = 3500;
+        var numVertices = 4000;
         var alphas = new Float32Array( numVertices * 1 ); // 1 values per vertex
 
         for( var i = 0; i < numVertices; i ++ ) {
@@ -75,7 +75,7 @@ export class ParticleShader {
             for( var i = 0; i < count; i ++ ) {
             
                 // dynamically change alphas
-                alphas.array[ i ] *= 0.995;
+                alphas.array[ i ] *= 0.998;
                 
                 if ( alphas.array[ i ] < 0.01 ) { 
                     alphas.array[ i ] = 1.0;

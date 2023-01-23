@@ -34,8 +34,9 @@ import { TWEEN } from 'https://unpkg.com/three@0.139.0/examples/jsm/libs/tween.m
 class ShaderComposer{
 
     dofVals = {
-      focus: 6.35,
-      aperture: 0.0018,
+      focus: 6,
+      //6.3 ,
+      aperture: 0.001,
       maxblur: 0.01,
       width: window.innerWidth,
       height: window.innerHeight

@@ -171,7 +171,7 @@ THREE.ShaderLib.points.fragmentShader = ps.getFrag();
 
 // SOME MORE SPRITES
 const knight = new SpriteFlipbook('js/spriteSmall.png', 8, 1, scene);
-knight.setPosition(1, 0.35, 0);
+knight.setPosition(1, 0.32, 0);
 scene.add(knight.getSprite());
 
 const ks = new KeyboardHandler(camera, knight, as, scene);
@@ -235,9 +235,8 @@ function changeToDay() {
 
 function changeToNight() {
 
-
 	var color = 0xFFB367;
-	var intensity = .3;
+	var intensity = .5;
 
 
 	scene.children = [];
@@ -339,7 +338,7 @@ function loadScene(isDay) {
 			}
 			if (child.name === ("ground")) {
 				console.log("GROUND")
-				child.material.roughness = 15;
+				child.material.roughness = 5;
 				if (!isDay) {
 					child.material.color.setHex(0xE1EEFC);
 				}
